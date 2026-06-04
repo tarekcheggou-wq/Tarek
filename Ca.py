@@ -1,8 +1,8 @@
 from flask import Flask, request, render_template_string
+import os
 
 app = Flask(__name__)
 
-# تصميم واجهة المستخدم HTML + CSS مدمج في متغير نصي
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -70,4 +70,8 @@ def calculator():
     return render_template_string(HTML_TEMPLATE, result=result)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # استدعاء سيرفر الإنتاج خفيف الوزن Waitress
+    from waitress import serve
+    port = int(os.environ.get("PORT", 10000))
+    print(f"Starting server on port {port}...")
+    serve(app, host='0.0.0.0', port=port)
