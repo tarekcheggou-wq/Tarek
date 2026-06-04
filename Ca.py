@@ -3,6 +3,7 @@ import os
 
 app = Flask(__name__)
 
+# واجهة المستخدم HTML + CSS مدمجة بالكامل لتبسيط الرفع في ملف واحد
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -12,11 +13,11 @@ HTML_TEMPLATE = """
     <title>آلة حاسبة بسيطة</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
-        .calculator { display: inline-block; padding: 20px; border: 1px solid #ccc; background: #fff; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
-        input, select, button { margin: 10px; padding: 10px; font-size: 16px; width: 80%; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { background-color: #28a745; color: white; cursor: pointer; border: none; font-weight: bold; }
+        .calculator { display: inline-block; padding: 20px; border: 1px solid #ccc; background: #fff; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); width: 320px; }
+        input, select, button { margin: 10px 0; padding: 12px; font-size: 16px; width: 100%; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; cursor: pointer; border: none; font-weight: bold; font-size: 18px; }
         button:hover { background-color: #218838; }
-        .result { font-size: 20px; font-weight: bold; color: #333; margin-top: 15px; padding: 10px; background-color: #e9ecef; border-radius: 5px; }
+        .result { font-size: 20px; font-weight: bold; color: #333; margin-top: 15px; padding: 12px; background-color: #e9ecef; border-radius: 5px; word-wrap: break-word; }
     </style>
 </head>
 <body>
@@ -32,7 +33,7 @@ HTML_TEMPLATE = """
             <option value="divide">قسمة (÷)</option>
         </select>
         <input type="number" step="any" name="num2" placeholder="العدد الثاني" required>
-        <button type="submit">احسب</button>
+        <button type="submit">احسب النتيجة</button>
     </form>
 
     {% if result is not none %}
@@ -70,8 +71,10 @@ def calculator():
     return render_template_string(HTML_TEMPLATE, result=result)
 
 if __name__ == '__main__':
-    # استدعاء سيرفر الإنتاج خفيف الوزن Waitress
-    from waitress import serve
+    # جلب المنفذ المتغير الذي تفرضه منصة Render تلقائياً، أو استخدام 10000 كمنفذ احتياطي
     port = int(os.environ.get("PORT", 10000))
-    print(f"Starting server on port {port}...")
+    
+    # تشغيل التطبيق عبر سيرفر الإنتاج Waitress لربطه بـ 0.0.0.0 بشكل إلزامي
+    from waitress import serve
+    print(f"Server is running globally on port {port}...")
     serve(app, host='0.0.0.0', port=port)
